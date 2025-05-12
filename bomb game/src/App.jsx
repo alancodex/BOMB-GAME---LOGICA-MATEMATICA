@@ -30,6 +30,7 @@ const manualContainerStyle = {
 
 export default function App() {
   return (
+    
     <div style={appStyle}>
       <h1 style={{ fontSize: '2.5rem', margin: '20px 0', color: '#ff5555' }}>
         💣 DESARME A BOMBA!
