@@ -81,7 +81,7 @@ const ManualSection = () => {
           <p><strong>Padrão ✛ (Cruz):</strong></p>
           <p>P: Interruptor 2 ativo</p>
           <p>Q: Timer {'>'} 30s</p>
-          <p><code>P ⊕ Q → Ative apenas se uma condição for verdadeira</code></p>
+          <p><code>P V Q → Ative apenas se uma condição for verdadeira</code></p>
           <p><em>Configuração correta: Ativar apenas o 2° interruptor</em></p>
         </div>
 
@@ -120,7 +120,6 @@ const ManualSection = () => {
         <p>∧ = AND (e)</p>
         <p>∨ = OR (ou)</p>
         <p>¬ = NOT (negação)</p>
-        <p>⊕ = XOR (ou exclusivo)</p>
         <p>→ = Então</p>
         <p>↔ = Bicondicional (se e somente se)</p>
       </div>
