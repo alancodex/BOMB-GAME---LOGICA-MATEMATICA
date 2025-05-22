@@ -17,11 +17,6 @@ const App = () => {
           color: '#ff5555',
           marginBottom: '30px'
         }}>
-          <img src="../public/favicon.png" alt=""  style={{ 
-        width: "150px", 
-        height: "auto",
-        borderRadius: "8px" // Estilos extras
-      }} />
         </h1>
         
         <div style={{

@@ -81,7 +81,7 @@ const ManualSection = () => {
           <p><strong>Padrão ✛ (Cruz):</strong></p>
           <p>P: Interruptor 2 ativo</p>
           <p>Q: Timer {'>'} 30s</p>
-          <p><code>P V Q → Ative apenas se uma condição for verdadeira</code></p>
+          <p><code>P ∨ Q → Ative apenas se uma condição for verdadeira</code></p>
           <p><em>Configuração correta: Ativar apenas o 2° interruptor</em></p>
         </div>
 
@@ -113,6 +113,37 @@ const ManualSection = () => {
           <p>Q: Interruptores configurados</p>
           <p><code>P ∧ Q → Pressione para desarmar</code></p>
         </div>
+      </div>
+
+      {/* Nova Seção: A Respeito da Memória */}
+      <div style={sectionStyle}>
+        <h4>MINIJOGO: A RESPEITO DA MEMÓRIA</h4>
+
+        <div style={ruleStyle}>
+          <p><strong>Estágio 1:</strong></p>
+          <p>Se o número exibido for:</p>
+          <ul>
+            <li>1 → Pressione o botão na <strong>2ª posição</strong></li>
+            <li>2 → Pressione o botão na <strong>2ª posição</strong></li>
+            <li>3 → Pressione o botão na <strong>3ª posição</strong></li>
+            <li>4 → Pressione o botão na <strong>4ª posição</strong></li>
+          </ul>
+        </div>
+
+        <div style={ruleStyle}>
+          <p><strong>Estágio 2:</strong></p>
+          <p>Se o número exibido for:</p>
+          <ul>
+            <li>1 → Pressione o botão com o número <strong>"4"</strong></li>
+            <li>2 → Pressione o botão na <strong>mesma posição</strong> que você pressionou no estágio 1</li>
+            <li>3 → Pressione o botão na <strong>1ª posição</strong></li>
+            <li>4 → Pressione o botão na <strong>mesma posição</strong> que você pressionou no estágio 1</li>
+          </ul>
+        </div>
+
+        <p style={{ fontStyle: 'italic', marginTop: '10px' }}>
+          <strong>Regras:</strong> Acertar avança para o próximo estágio. Errar reinicia do estágio 1.
+        </p>
       </div>
 
       <div style={{ fontStyle: 'italic', marginTop: '20px' }}>
