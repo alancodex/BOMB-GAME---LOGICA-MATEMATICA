@@ -1,123 +1,165 @@
 import React, { useState, useEffect } from 'react';
 
 const WiresSection = () => {
-  const availableColors = ['#ff5555', '#5555ff', '#55ff55', '#ffff55', '#333', '#ff55ff', '#55ffff'];
-
-  const generateRandomWires = (num) => {
-    const shuffled = [...availableColors].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, num);
+  // Cores exclusivas por regra (5 fios cada), sem a regra 3
+  const RULE_WIRES = {
+    1: ['#ff5555', '#800080', '#ffa500', '#55ffff', '#8b4513'], // vermelho, roxo, laranja, ciano, marrom
+    2: ['#ffffff', '#ffff55', '#ff69b4', '#808080', '#006400'], // branco, amarelo, rosa, cinza, verde escuro
+    4: ['#00008b', '#87ceeb', '#40e0d0', '#4169e1', '#4682b4'], // azul escuro, azul claro, azul piscina, azul royal, azul petróleo
   };
 
+  // Função para embaralhar (Fisher-Yates)
+  const shuffleArray = (array) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  const [ruleNumber, setRuleNumber] = useState(null);
   const [wires, setWires] = useState([]);
   const [cutWires, setCutWires] = useState([]);
-  const [message, setMessage] = useState('');
+  const [isCorrect, setIsCorrect] = useState(null); // null = não verificado
 
-  const timer = 42; // Exemplo: valor fixo só para teste da lógica.
+  const timer = 42; // valor fixo para teste
 
   useEffect(() => {
-    const randomWires = generateRandomWires(5);
-    setWires(randomWires);
-    setCutWires(Array(5).fill(false));
-    setMessage('');
+    // Escolhe aleatoriamente uma regra entre 1, 2 e 4
+    const ruleKeys = Object.keys(RULE_WIRES);
+    const chosenRule = ruleKeys[Math.floor(Math.random() * ruleKeys.length)];
+    setRuleNumber(parseInt(chosenRule));
+
+    // Usa o conjunto fixo de fios da regra escolhida e embaralha para exibição
+    const fixedWires = RULE_WIRES[chosenRule];
+    const shuffledWires = shuffleArray(fixedWires);
+
+    setWires(shuffledWires);
+    setCutWires(Array(shuffledWires.length).fill(false));
+    setIsCorrect(null);
   }, []);
 
   const handleCutWire = (index) => {
+    if (cutWires[index]) return; // já cortado
+
     const newCutWires = [...cutWires];
     newCutWires[index] = true;
     setCutWires(newCutWires);
-    console.log(`Cortou o fio ${index + 1}: Cor ${wires[index]}`);
-    
+
     checkIfCorrect(newCutWires);
   };
 
- const checkIfCorrect = (newCutWires) => {
-  const hasRed = wires.includes('#ff5555');
-  const hasBlack = wires.includes('#333');
-  const hasYellow = wires.includes('#ffff55');
-  const hasGreen = wires.includes('#55ff55');
+  // Checa corte correto conforme regra e cores exclusivas
+  const checkIfCorrect = (newCutWires) => {
+    let mustCutColor = null;
 
-  const isThirdCut = newCutWires[2];
-  const isLastCut = newCutWires[wires.length - 1];
-  const isFirstCut = newCutWires[0];
+    switch (ruleNumber) {
+      case 1:
+        // Regra 1: P = existe vermelho e timer par, cortar 3º fio (index 2)
+        if (timer % 2 === 0) {
+          mustCutColor = RULE_WIRES[1][2];
+        }
+        break;
 
-  let correct = false;
-  let ruleApplied = '';
+      case 2:
+        // Regra 2: P = branco, Q = amarelo, P ∧ Q → cortar último fio
+        mustCutColor = RULE_WIRES[2][RULE_WIRES[2].length - 1];
+        break;
 
-  // Regra 1: prioridade máxima
-  if (hasRed && timer % 2 === 0) {
-    correct = isThirdCut;
-    ruleApplied = 'Corte o 3º fio';
-  }
-  // Regra 2: se a 1ª não se aplicou
-  else if (hasBlack || hasYellow) {
-    correct = isLastCut;
-    ruleApplied = 'Corte o último fio';
-  }
-  // Regra 3: se as anteriores não se aplicaram
-  else if (!hasGreen) {
-    correct = isFirstCut;
-    ruleApplied = 'Corte o primeiro fio';
-  } else {
-    ruleApplied = 'Nenhuma regra se aplica';
-    correct = true;  // Se nenhuma regra se aplica, considera correto
-  }
+      case 4:
+        // Regra 4: mais de 3 fios azuis → cortar 2º fio
+        mustCutColor = RULE_WIRES[4][1];
+        break;
 
-  if (correct) {
-    setMessage(`✅ ${ruleApplied}! Fios cortados corretamente!`);
-  } else {
-    setMessage(`❌ ${ruleApplied}! Fios incorretos!`);
-  }
-};
+      default:
+        mustCutColor = null;
+    }
 
-  
+    if (!mustCutColor) {
+      setIsCorrect(true);
+      return;
+    }
+
+    const correctIndex = wires.findIndex((c) => c === mustCutColor);
+
+    const onlyCorrectCut = newCutWires.every((cut, idx) =>
+      idx === correctIndex ? cut === true : cut === false
+    );
+
+    setIsCorrect(onlyCorrectCut);
+  };
 
   const containerStyle = {
     backgroundColor: '#2a2a2a',
     borderRadius: '15px',
     padding: '35px',
     boxShadow: '0 0 10px rgba(255, 50, 50, 0.2)',
-    height: '100%'
+    height: '100%',
   };
 
   const wiresRowStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: '30px',
+    gap: '50px',
     padding: '50px 0',
-    height: '100px'
+    height: '100px',
+    marginTop: '100px',
   };
 
   const wireStyle = {
     width: '13px',
-    height: '150px',
+    height: '300px',
     cursor: 'pointer',
     borderRadius: '6px',
     transition: 'all 0.2s',
     boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-    position: 'relative'
+    position: 'relative',
+  };
+
+  const feedbackBoxStyle = {
+    marginTop: '20px',
+    height: '30px',
+    width: '220px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    borderRadius: '6px',
+    backgroundColor:
+      isCorrect === null ? 'transparent' : isCorrect ? '#4CAF50' : '#f44336',
+    boxShadow:
+      isCorrect === null ? 'none' : `0 0 10px ${isCorrect ? '#4CAF50' : '#f44336'}`,
+    transition: 'background-color 0.3s, box-shadow 0.3s',
+    color: '#fff',
+    fontWeight: 'bold',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    userSelect: 'none',
   };
 
   return (
     <div style={containerStyle}>
-      <h3 style={{ 
-        margin: '0 0 15px',
-        color: '#eee',
-        fontSize: '1rem',
-        textAlign: 'center'
-      }}>
-        SELECIONE O FIO PARA CORTAR
+      <h3
+        style={{
+          margin: '0 0 15px',
+          color: '#eee',
+          fontSize: '1rem',
+          textAlign: 'center',
+        }}
+      >
+        SELECIONE O FIO PARA CORTAR (Regra {ruleNumber})
       </h3>
-      
+
       <div style={wiresRowStyle}>
         {wires.map((color, index) => (
-          <div 
+          <div
             key={index}
-            style={{ 
+            style={{
               ...wireStyle,
               backgroundColor: color,
               opacity: cutWires[index] ? 0.3 : 1,
-              transform: cutWires[index] ? 'scale(0.9)' : 'scale(1)'
+              transform: cutWires[index] ? 'scale(0.9)' : 'scale(1)',
             }}
             onMouseEnter={(e) => {
               if (!cutWires[index]) {
@@ -131,20 +173,18 @@ const WiresSection = () => {
                 e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
               }
             }}
-            onClick={() => {
-              if (!cutWires[index]) {
-                handleCutWire(index);
-              }
-            }}
+            onClick={() => handleCutWire(index)}
           />
         ))}
       </div>
 
-      {message && (
-        <div style={{ color: '#fff', textAlign: 'center', marginTop: '20px', fontSize: '1.2rem' }}>
-          {message}
-        </div>
-      )}
+      <div style={feedbackBoxStyle}>
+        {isCorrect === null
+          ? ''
+          : isCorrect
+          ? '✅ Fio correto cortado!'
+          : '❌ Fio incorreto! Tente novamente.'}
+      </div>
     </div>
   );
 };

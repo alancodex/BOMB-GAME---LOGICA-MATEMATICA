@@ -18,13 +18,13 @@ const SwitchesSection = () => {
     const newSwitches = [...switches];
     newSwitches[index] = !newSwitches[index];
     setSwitches(newSwitches);
-    setFeedback(''); // Limpa o feedback ao mudar os interruptores
+    setFeedback('');
   };
 
   const handleConfirm = () => {
     const correctPositions = symbolRules[randomSymbol];
     const isCorrect = switches.every((sw, i) => sw === correctPositions[i]);
-    
+
     if (isCorrect) {
       setFeedback({ text: 'CORRETO!', color: '#4CAF50' });
     } else {
@@ -39,7 +39,30 @@ const SwitchesSection = () => {
     boxShadow: '0 0 15px rgba(255, 50, 50, 0.3)',
     border: '2px solid #ff5555',
     height: '100%',
-    position: 'relative'
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  };
+
+  const symbolStyle = {
+    fontSize: '2rem',
+    marginBottom: '20px',
+    color: '#ff5555',
+    textAlign: 'center'
+  };
+
+  const switchesContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '30px',
+    margin: '20px 0'
+  };
+
+  const switchWrapperStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '10px'
   };
 
   const confirmButtonStyle = {
@@ -51,12 +74,7 @@ const SwitchesSection = () => {
     cursor: 'pointer',
     fontSize: '1rem',
     fontWeight: 'bold',
-    marginTop: '20px',
-    width: '100%',
-    transition: 'all 0.3s',
-    '&:hover': {
-      backgroundColor: '#ff3333'
-    }
+    transition: 'all 0.3s'
   };
 
   const feedbackStyle = {
@@ -71,68 +89,56 @@ const SwitchesSection = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={{ 
-        fontSize: '2rem',
-        marginBottom: '20px',
-        color: '#ff5555',
-        textAlign: 'center'
-      }}>
+      <div style={symbolStyle}>
         SÍMBOLO: <span style={{ fontWeight: 'bold' }}>{randomSymbol}</span>
       </div>
-      
-      {switches.map((isOn, index) => (
-        <div key={index} style={{ 
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          margin: '15px 0',
-          padding: '10px',
-          backgroundColor: '#333',
-          borderRadius: '10px'
-        }}>
-          <span style={{ color: '#ddd', fontSize: '1rem' }}>
-            Interruptor {index + 1}
-          </span>
-          <div 
-            style={{ 
-              width: '60px',
-              height: '30px',
-              backgroundColor: isOn ? '#4CAF50' : '#555',
-              borderRadius: '15px',
-              position: 'relative',
-              cursor: 'pointer',
-              transition: 'all 0.3s'
-            }}
-            onClick={() => toggleSwitch(index)}
-          >
-            <div 
+
+      <div style={switchesContainerStyle}>
+        {switches.map((isOn, index) => (
+          <div key={index} style={switchWrapperStyle}>
+            <span style={{ color: '#ddd', fontSize: '2rem' }}>
+             {index + 1}
+            </span>
+            <div
               style={{
-                position: 'absolute',
-                width: '26px',
-                height: '26px',
-                backgroundColor: '#fff',
-                borderRadius: '50%',
-                top: '2px',
-                left: isOn ? '32px' : '2px',
-                transition: 'all 0.3s'
+                width: '60px',
+                height: '30px',
+                backgroundColor: isOn ? '#4CAF50' : '#555',
+                borderRadius: '15px',
+                position: 'relative',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
               }}
-            />
+              onClick={() => toggleSwitch(index)}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '26px',
+                  height: '26px',
+                  backgroundColor: '#fff',
+                  borderRadius: '50%',
+                  top: '2px',
+                  left: isOn ? '32px' : '2px',
+                  transition: 'all 0.3s',
+                }}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      <button 
-        style={confirmButtonStyle}
-        onClick={handleConfirm}
-      >
-        CONFIRMAR
-      </button>
+      <div>
+        <button style={confirmButtonStyle} onClick={handleConfirm}>
+          CONFIRMAR
+        </button>
 
-      {feedback && (
-        <div style={feedbackStyle}>
-          {feedback.text}
-        </div>
-      )}
+        {feedback && (
+          <div style={feedbackStyle}>
+            {feedback.text}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
