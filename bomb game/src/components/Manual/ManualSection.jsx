@@ -52,7 +52,7 @@ const ManualSection = () => {
 
   <div style={ruleStyle}>
     <p><strong>Regra 3 (Nova):</strong></p>
-    <p>P: Existem mais de 3 fios azuis</p>
+    <p>P: Existem mais de 2 fios azuis</p>
     <p><code>P → Corte o 2º fio</code></p>
   </div>
 </div>
