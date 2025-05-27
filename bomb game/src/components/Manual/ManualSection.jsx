@@ -37,27 +37,25 @@ const ManualSection = () => {
   <h4>REGRAS LÓGICAS PARA FIOS (Aplicadas na ordem em que a primeira verdadeira se aplicar):</h4>
 
   <div style={ruleStyle}>
-    <p><strong>Regra 1 (Conjunção):</strong></p>
+    <p><strong>Caso 1:</strong></p>
     <p>P: Existe pelo menos 1 fio vermelho</p>
     <p>Q: O timer mostra número par</p>
     <p><code>P ∧ Q → Corte o 3º fio</code></p>
   </div>
 
   <div style={ruleStyle}>
-    <p><strong>Regra 2 (Disjunção):</strong></p>
+    <p><strong>Caso 2:</strong></p>
     <p>P: Há fio branco</p>
     <p>Q: Há fio amarelo</p>
     <p><code>P ∧ Q → Corte o último fio</code></p>
   </div>
 
   <div style={ruleStyle}>
-    <p><strong>Regra 3 (Nova):</strong></p>
-    <p>P: Existem mais de 2 fios azuis</p>
+    <p><strong>Caso 3:</strong></p>
+    <p>P: Existe mais de 1 fio azul</p>
     <p><code>P → Corte o 2º fio</code></p>
   </div>
 </div>
-
-
 
 {/* Seção de Interruptores */}
 <div style={sectionStyle}>

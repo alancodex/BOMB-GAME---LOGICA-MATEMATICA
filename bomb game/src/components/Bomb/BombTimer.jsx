@@ -1,35 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { BombContext } from "./BombContext";
 
-const BombTimer = ({ initialTime = 300 }) => {
-  const [timeLeft, setTimeLeft] = useState({
-    totalMs: initialTime * 1000,
-    minutes: Math.floor(initialTime / 60),
-    seconds: initialTime % 60,
-    milliseconds: 0
-  });
+const BombTimer = () => {
+  const { timeLeft, setTimeLeft } = useContext(BombContext);
+
+  // Convertendo segundos para milissegundos para a contagem mais precisa
+  const [totalMs, setTotalMs] = useState(timeLeft * 1000);
 
   useEffect(() => {
-    if (timeLeft.totalMs <= 0) return;
+    setTotalMs(timeLeft * 1000);
+  }, [timeLeft]);
+
+  useEffect(() => {
+    if (totalMs <= 0) {
+      setTimeLeft(0);
+      return;
+    }
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        const newTotalMs = prev.totalMs - 10;
-        return {
-          totalMs: newTotalMs,
-          minutes: Math.floor((newTotalMs / 1000) / 60),
-          seconds: Math.floor((newTotalMs / 1000) % 60),
-          milliseconds: Math.floor((newTotalMs % 1000) / 10)
-        };
+      setTotalMs((prev) => {
+        const newTotal = prev - 10;
+        if (newTotal <= 0) {
+          clearInterval(timer);
+          setTimeLeft(0);
+          return 0;
+        }
+        setTimeLeft(Math.ceil(newTotal / 1000));
+        return newTotal;
       });
-    }, 10); // Atualiza a cada 10ms
+    }, 10);
 
     return () => clearInterval(timer);
-  }, [timeLeft.totalMs]);
+  }, [totalMs, setTimeLeft]);
 
-  const formatTime = () => {
-    const { minutes, seconds, milliseconds } = timeLeft;
-    return `0${minutes}:${seconds < 10 ? "0" : ""}${seconds}:${milliseconds < 10 ? "0" : ""}${milliseconds}`;
-  };
+  const minutes = Math.floor(totalMs / 60000);
+  const seconds = Math.floor((totalMs % 60000) / 1000);
+  const milliseconds = Math.floor((totalMs % 1000) / 10);
+
+  const formatTime = () =>
+    `0${minutes}:${seconds < 10 ? "0" : ""}${seconds}:${milliseconds < 10 ? "0" : ""}${milliseconds}`;
 
   const timerContainerStyle = {
     backgroundColor: '#2a2a2a',

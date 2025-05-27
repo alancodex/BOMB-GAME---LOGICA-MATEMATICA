@@ -1,28 +1,51 @@
 import React, { useState, useEffect } from 'react';
 
 const WiresSection = () => {
-  // Cores conforme pedido
-  const COLORS_RULE_1 = ['#ff0000', '#800080', '#ffa500', '#55ffff', '#8b4513']; // vermelho e outras
-  const COLORS_RULE_2 = ['#ffffff', '#ffff00', '#ff69b4', '#808080', '#006400']; // branco, amarelo e outras
-  const COLORS_RULE_4 = ['#4169E1', '#4169E1', '#4169E1', '#4169E1', '#4169E1']; // azul (mesmo tom repetido para preencher)
-
-  // Junta todas as cores para embaralhar
-  const ALL_COLORS = [...COLORS_RULE_1, ...COLORS_RULE_2, ...COLORS_RULE_4];
-
-  // Gera fios embaralhados (5 fios)
-  const generateRandomWires = () => {
-    const shuffled = [...ALL_COLORS].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
-  };
+  const COLORS_EXTRA = ['#800080', '#ffa500', '#55ffff', '#8b4513', '#ff69b4', '#808080', '#006400', '#4169E1']; 
 
   const [wires, setWires] = useState([]);
   const [cutWires, setCutWires] = useState([]);
   const [isCorrect, setIsCorrect] = useState(null);
+  const [rule, setRule] = useState(null);
 
-  const timer = 42; // valor fixo para teste
+  const timer = 42; // fixo para teste
+
+  const shuffle = (array) => {
+    return [...array].sort(() => 0.5 - Math.random());
+  };
+
+  const generateWiresForRule = (selectedRule) => {
+    let selectedColors = [];
+    const extraColors = shuffle(COLORS_EXTRA);
+
+    switch (selectedRule) {
+      case 1: // Regra 1: vermelho + timer par
+        selectedColors.push('#ff0000'); // vermelho
+        break;
+      case 2: // Regra 2: branco e amarelo
+        selectedColors.push('#ffffff', '#ffff00'); // branco, amarelo
+        break;
+      case 3: // Regra 3: mais de 1 azul
+        selectedColors.push('#4169E1', '#4169E1'); // dois azuis
+        break;
+      default:
+        break;
+    }
+
+    // completa com outras cores aleatórias que não interferem
+    while (selectedColors.length < 5) {
+      const nextColor = extraColors.pop();
+      selectedColors.push(nextColor);
+    }
+
+    return shuffle(selectedColors);
+  };
 
   useEffect(() => {
-    const randomWires = generateRandomWires();
+    const selectedRule = Math.ceil(Math.random() * 3); // 1, 2 ou 3
+    setRule(selectedRule);
+
+    const randomWires = generateWiresForRule(selectedRule);
     setWires(randomWires);
     setCutWires(Array(randomWires.length).fill(false));
     setIsCorrect(null);
@@ -39,30 +62,20 @@ const WiresSection = () => {
   };
 
   const checkIfCorrect = (newCutWires, cutIndex) => {
-    const hasRed = wires.includes('#ff0000');
-    const hasWhite = wires.includes('#ffffff');
-    const hasYellow = wires.includes('#ffff00');
-
-    // Conta quantos fios azuis (#4169E1)
-    const blueShade = '#4169E1';
-    const blueCount = wires.filter(color => color === blueShade).length;
-
     let correct = false;
 
-    // Regra 1: vermelho e timer par → cortar 3º fio (índice 2)
-    if (hasRed && timer % 2 === 0) {
-      correct = cutIndex === 2;
-    }
-    // Regra 2: branco e amarelo → cortar último fio
-    else if (hasWhite && hasYellow) {
-      correct = cutIndex === wires.length - 1;
-    }
-    // Regra 4: mais de 2 azuis → cortar 2º fio (índice 1)
-    else if (blueCount > 2) {
-      correct = cutIndex === 1;
-    } else {
-      // Nenhuma regra válida → aceita qualquer corte
-      correct = true;
+    switch (rule) {
+      case 1:
+        correct = cutIndex === 2; // 3º fio
+        break;
+      case 2:
+        correct = cutIndex === wires.length - 1; // último fio
+        break;
+      case 3:
+        correct = cutIndex === 1; // 2º fio
+        break;
+      default:
+        correct = true;
     }
 
     setIsCorrect(correct);
