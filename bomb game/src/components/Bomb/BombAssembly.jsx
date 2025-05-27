@@ -17,7 +17,7 @@ const leftPanelStyle = {
   gap: '30px',
   backgroundColor: '#2a2a2a',
   borderRadius: '15px',
-  padding: '25px',
+  padding: '1rem',
   boxShadow: '0 0 20px rgba(255, 50, 50, 0.3)',
   border: '2px solid #ff5555'
 };
@@ -26,10 +26,10 @@ const rightPanelStyle = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  gap: '30px',
+  gap: '2rem',
   backgroundColor: '#2a2a2a',
   borderRadius: '15px',
-  padding: '25px',
+  padding: '1rem',
   boxShadow: '0 0 20px rgba(255, 50, 50, 0.3)',
   border: '2px solid #ff5555'
 };

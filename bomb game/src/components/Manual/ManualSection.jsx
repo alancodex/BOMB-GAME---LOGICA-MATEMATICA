@@ -10,8 +10,8 @@ const ManualSection = () => {
     height: '800px',
     overflowY: 'auto',
     lineHeight: '1.6',
-    width: '120%',
-    fontSize: '18px'
+    fontSize: '18px',
+    boxSizing: 'border-box', 
   };
 
   const sectionStyle = {
